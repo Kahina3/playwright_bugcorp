@@ -103,4 +103,39 @@ test.describe("Tests de la page annuaire", () => {
     await expect(page.getByTestId("total-count")).toContainText("151");
     await expect(page.getByTestId("filtered-count")).toContainText("151");
   });
+
+  //test BDON-33
+  test("test BDON-33", async ({ page }) => {
+    //Visiter le site https://bugcorp.vercel.app/
+    await page.goto("https://bugcorp.vercel.app/");
+    //Un affichage du site https://bugcorp.vercel.app/ est obtenu sur le navigateur.
+    await expect(page).toHaveURL("https://bugcorp.vercel.app/");
+
+    //Cliquer sur le bouton "l’annuaire" dans le bandeau sur le côté gauche de la page
+    await page.getByTestId("nav-directory").click();
+    //Un affichage d’une page avec le titre "L'Annuaire Enterprise" est obtenu
+    await expect(page.locator("#page-title")).toContainText(
+      "L'Annuaire Enterprise"
+    );
+
+    //Cliquer sur la zone de saisie "Rechercher"
+    await page.getByTestId("search-input").click();
+    //Un curseur est présent dans la zone de saisie
+    await expect(page.locator("#input-search")).toBeFocused();
+
+    //Saisir Dennis dans la zone de saisie
+    await page.getByTestId("search-input").fill("Dennis");
+    //Le tableau contient une ligne relative à l'identifiant #1001 et le nombre d'éléments filtrés est 1
+    await expect(page.locator("#cell-name-1001")).toContainText("Dennis");
+    await expect(page.getByTestId("filtered-count")).toContainText("1");
+
+    //Saisir Dennis2 dans la zone de saisie
+    await page.getByTestId("search-input").click();
+    await page.getByTestId("search-input").fill("Dennis2");
+    //Le tableau ne contient pas de lignes et le nombre d'éléments filtrés est 0
+    await expect(
+      page.getByTestId("employee-table").getByRole("paragraph")
+    ).toContainText("Aucun employé trouvé. Essayez d'embaucher quelqu'un ?");
+    await expect(page.getByTestId("filtered-count")).toContainText("0");
+  });
 });
