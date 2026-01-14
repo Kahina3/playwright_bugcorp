@@ -91,5 +91,96 @@ test.describe("Changer le rôle d'un employé: promouvoir", () => {
     await expect(page.locator("#current-savings-value")).toContainText(
       "-60 000 €"
     );
+
+    // Etape 8
+    // Cliquer sur l’icône apparaissant sous la forme d’un bouton contenant une flèche verte en escalier vers le haut.
+    await page.getByTestId("promote-btn-1015").click();
+    // Le nom du rôle situé sous l’identité de l’employé change pour devenir: Senior Dev
+    await expect(page.locator("#cell-role-1015")).toContainText("Senior Dev");
+    // le nombre de bugs a changé
+    await expect(page.locator("#cell-bugs-1015")).not.toHaveText("-84");
+    // le  montant inscrit sous objectif d'économie selon le montant prévu est modifié
+    await expect(page.locator("#current-savings-value")).toContainText(
+      "-75 000 €"
+    );
+
+    // Etape 9
+// Cliquer sur l’icône apparaissant sous la forme d’un bouton contenant une flèche verte en escalier vers le haut.
+    await page.getByTestId("promote-btn-1015").click();
+    // Le nom du rôle situé sous l’identité de l’employé change pour devenir: Manager
+    await expect(page.locator("#cell-role-1015")).toContainText("Manager");
+    // le nombre de bugs a changé
+    await expect(page.locator("#cell-bugs-1015")).not.toHaveText("-94");
+    // le  montant inscrit sous objectif d'économie selon le montant prévu est modifié
+    await expect(page.locator("#current-savings-value")).toContainText(
+      "-90 000 €"
+    );
+
+
+    // Etape 10
+// Cliquer sur l’icône apparaissant sous la forme d’un bouton contenant une flèche verte en escalier vers le haut.
+    await page.getByTestId("promote-btn-1015").click();
+    // Le nom du rôle situé sous l’identité de l’employé change pour devenir: Director
+    await expect(page.locator("#cell-role-1015")).toContainText("Director");
+    // le nombre de bugs a changé
+    await expect(page.locator("#cell-bugs-1015")).not.toHaveText("-104");
+    // le  montant inscrit sous objectif d'économie selon le montant prévu est modifié
+    await expect(page.locator("#current-savings-value")).toContainText(
+      "-105 000 €"
+    );
+
+
+// Etape 11
+// Cliquer sur l’icône apparaissant sous la forme d’un bouton contenant une flèche verte en escalier vers le haut.
+    await page.getByTestId("promote-btn-1015").click();
+    // Le nom du rôle situé sous l’identité de l’employé change pour devenir: VP
+    await expect(page.locator("#cell-role-1015")).toContainText("VP");
+    // le nombre de bugs a changé
+    await expect(page.locator("#cell-bugs-1015")).not.toHaveText("-114");
+    // le  montant inscrit sous objectif d'économie selon le montant prévu est modifié
+    await expect(page.locator("#current-savings-value")).toContainText(
+      "-120 000 €"
+    );
+
+// Etape 12
+// Cliquer sur l’icône apparaissant sous la forme d’un bouton contenant une flèche verte en escalier vers le haut.
+    await page.getByTestId("promote-btn-1015").click();
+    // Le nom du rôle situé sous l’identité de l’employé change pour devenir: CEO
+    await expect(page.locator("#cell-role-1015")).toContainText("CEO");
+    // le nombre de bugs a changé
+    await expect(page.locator("#cell-bugs-1015")).not.toHaveText("-124");
+    // le  montant inscrit sous objectif d'économie selon le montant prévu est modifié
+    await expect(page.locator("#current-savings-value")).toContainText(
+      "-135 000 €"
+    );
+
+
+// Etape 13
+// Cliquer sur l’icône apparaissant sous la forme d’un bouton contenant une flèche verte en escalier vers le haut.
+    await page.getByTestId("promote-btn-1015").click();
+    // Le nom du rôle situé sous l’identité de l’employé change pour devenir: Galactic Emperor
+    await expect(page.locator("#cell-role-1015")).toContainText("Galactic Emperor");
+    // le nombre de bugs a changé
+    await expect(page.locator("#cell-bugs-1015")).not.toHaveText("-134");
+    // le  montant inscrit sous objectif d'économie selon le montant prévu est modifié
+    await expect(page.locator("#current-savings-value")).toContainText(
+      "-150 000 €"
+    );
+
+
+
+// Etape 14
+// Cliquer sur l’icône apparaissant sous la forme d’un bouton contenant une flèche verte en escalier vers le haut.
+    await page.getByTestId("promote-btn-1015").click();
+    // Le nom du rôle situé sous l’identité de l’employé change pour devenir: Galactic Emperor
+    await expect(page.locator("#cell-role-1015")).toContainText("Galactic Emperor");
+    // le nombre de bugs a changé
+    await expect(page.locator("#cell-bugs-1015")).toHaveText("-144");
+    // le  montant inscrit sous objectif d'économie selon le montant prévu est modifié
+    await expect(page.locator("#current-savings-value")).toContainText(
+      "-150 000 €"
+    );
+
+
   });
 });
