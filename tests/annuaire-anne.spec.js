@@ -1,5 +1,7 @@
 import { test, expect } from "@playwright/test";
 
+//const rolesReversed = roles.reverse();
+
 export async function promouvoir(page, id, role) {
   const btnPrefix = "promote-btn-";
   const rolePrefix = "#cell-role-";
@@ -41,6 +43,23 @@ export async function promouvoir(page, id, role) {
   // on vérifie que la valeur que l'on doit obtenir correspond à celle que l'on récupère sur le site
   expect(newSavingValue).toBe(expectedSaving);
 }
+export async function promouvoirTousLesRoles(page, id) {
+  const roles = [
+    "Prompt Engineer",
+    "Scapegoat",
+    "Intern",
+    "Junior Dev",
+    "Senior Dev",
+    "Manager",
+    "Director",
+    "VP",
+    "CEO",
+    "Galactic Emperor",
+  ];
+  for (const role of roles) {
+    await promouvoir(page, id, role);
+  }
+}
 
 // fonction rétrograder
 export async function retrograder(page, id, role) {
@@ -71,7 +90,7 @@ export async function retrograder(page, id, role) {
   // le nombre de bugs diminue de 10
   const newBugCount = bugValue + 10;
   // on vérifie que le nombre de bugs affiché a bien pris en compte la nouvelle valeur et on la transforme en string pour coller au typage de la valeur bug que playwright trouve sur le site
-  //await expect(page.locator(bugCell)).toHaveText("+" + newBugCount.toString());
+
   await expect(page.locator(bugCell)).toHaveText(
     new RegExp(`^\\+${newBugCount}$`)
   );
@@ -88,9 +107,27 @@ export async function retrograder(page, id, role) {
   expect(newSavingValue).toBe(expectedSaving);
 }
 
+export async function retrograderTousLesRoles(page, id) {
+  const rolesReversed = [
+    "CEO",
+    "VP",
+    "Director",
+    "Manager",
+    "Senior Dev",
+    "Junior Dev",
+    "Intern",
+    "Scapegoat",
+    "Prompt Engineer",
+    "Coffee Maker",
+  ];
+  for (const role of rolesReversed) {
+    await retrograder(page, id, role);
+  }
+}
+
 test.describe("Changer le rôle d'un employé", () => {
   // test BDON-30 promouvoir
-  test.skip("test BDON-30 promouvoir ", async ({ page }) => {
+  test("test BDON-30 promouvoir ", async ({ page }) => {
     // Etape 1
     // Visiter le site
     await page.goto("https://bugcorp.vercel.app/");
@@ -124,32 +161,13 @@ test.describe("Changer le rôle d'un employé", () => {
     await expect(page.locator("#cell-role-1015")).toContainText("Coffee Maker");
 
     // roles: Coffee Maker, Prompt Engineer, Scapegoat, Intern, Junior Dev, Senior Dev, Manager, Director, VP, CEO, Galactic Emperor
-
-    // Etape 4
-    await promouvoir(page, 1015, "Prompt Engineer");
-    // Etape 5
-    await promouvoir(page, 1015, "Scapegoat");
-    // Etape 6
-    await promouvoir(page, 1015, "Intern");
-    // Etape 7
-    await promouvoir(page, 1015, "Junior Dev");
-    // Etape 8
-    await promouvoir(page, 1015, "Senior Dev");
-    // Etape 9
-    await promouvoir(page, 1015, "Manager");
-    // Etape 10
-    await promouvoir(page, 1015, "Director");
-    // Etape 11
-    await promouvoir(page, 1015, "VP");
-    // Etape 12
-    await promouvoir(page, 1015, "CEO");
-    // Etape 13
-    await promouvoir(page, 1015, "Galactic Emperor");
+    // Utilisation de la fonction promouvoir avec une boucle sur les rôles
+    await promouvoirTousLesRoles(page, 1015);
 
     // Etape 14
     // Cliquer sur l’icône apparaissant sous la forme d’un bouton contenant une flèche verte en escalier vers le haut.
     await page.getByTestId("promote-btn-1015").click();
-    // Le nom du rôle situé sous l’identité de l’employé reste à Galactic Emperor
+    // Le nom du rôle situé sous l’identité de l’employé reste à Galactic Emperor (role le pus élevé)
     await expect(page.locator("#cell-role-1015")).toContainText(
       "Galactic Emperor"
     );
@@ -160,6 +178,8 @@ test.describe("Changer le rôle d'un employé", () => {
       "-150 000 €"
     );
   });
+
+  // test BDON-37 rétrograder
   test("test BDON-37 rétrograder", async ({ page }) => {
     // Etape 1
     // Visiter le site
@@ -192,16 +212,7 @@ test.describe("Changer le rôle d'un employé", () => {
       "Galactic Emperor"
     );
 
-    await retrograder(page, 1010, "CEO");
-    await retrograder(page, 1010, "VP");
-    await retrograder(page, 1010, "Director");
-    await retrograder(page, 1010, "Manager");
-    await retrograder(page, 1010, "Senior Dev");
-    await retrograder(page, 1010, "Junior Dev");
-    await retrograder(page, 1010, "Intern");
-    await retrograder(page, 1010, "Scapegoat");
-    await retrograder(page, 1010, "Prompt Engineer");
-    await retrograder(page, 1010, "Coffee Maker");
+    await retrograderTousLesRoles(page, 1010);
 
     // Cliquer sur l’icône apparaissant sous la forme d’un bouton contenant une flèche verte en escalier vers le bas.
     await page.getByTestId("demote-btn-1010").click();
