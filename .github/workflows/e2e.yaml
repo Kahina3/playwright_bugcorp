@@ -1,4 +1,4 @@
-name: E2E (Playwright)
+name: Tests automatisés (Playwright)
 
 on:
   repository_dispatch:
@@ -11,44 +11,44 @@ jobs:
     timeout-minutes: 30
 
     steps:
-      - name: Checkout
+      - name: Récupérer le code
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Configurer Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
 
-      - name: Install dependencies
+      - name: Installer les dépendances
         run: npm ci
 
-      - name: Install Playwright browsers (with OS deps)
+      - name: Installer les navigateurs Playwright (avec dépendances OS)
         run: npx playwright install --with-deps
 
-      - name: Wait for app to be ready
+      - name: Attendre que l'application soit prête
         run: |
           URL="https://bugcorp.vercel.app"
-          echo "Waiting for $URL ..."
+          echo "Attente de $URL ..."
           for i in {1..60}; do
             code=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
             if [ "$code" = "200" ]; then
               echo "OK (HTTP 200) ✅"
               exit 0
             fi
-            echo "Not ready yet (HTTP $code). retry in 5s..."
+            echo "Pas prête encore (HTTP $code). nouvelle tentative dans 5s..."
             sleep 5
           done
-          echo "Timed out waiting for $URL ❌"
+          echo "Délai d'expiration en attente de $URL ❌"
           exit 1
 
-      - name: Run Playwright tests
+      - name: Exécuter les tests Playwright
         env:
           CI: true
           BASE_URL: https://bugcorp.vercel.app
         run: npx playwright test
 
-      - name: Upload Playwright HTML report
+      - name: Télécharger le rapport HTML Playwright
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -56,7 +56,7 @@ jobs:
           path: playwright-report
           retention-days: 14
 
-      - name: Upload Playwright test results (JUnit + traces + videos + screenshots)
+      - name: Télécharger les résultats des tests Playwright (JUnit + traces + vidéos + captures d'écran)
         if: always()
         uses: actions/upload-artifact@v4
         with:
