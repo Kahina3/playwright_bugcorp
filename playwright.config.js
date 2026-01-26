@@ -46,10 +46,6 @@ export default defineConfig({
     trace: "on-first-retry",
     screenshot: "only-on-failure",
     video: "retain-on-failure",
-
-    // Recommandé : isole mieux le state entre tests
-    // (Playwright le fait déjà bien, mais ça aide parfois)
-    // storageState: undefined,
   },
 
   // Navigateurs
@@ -59,6 +55,4 @@ export default defineConfig({
     { name: "webkit", use: { ...devices["Desktop Safari"] } },
   ],
 
-  // Optionnel : pour garder le CI moins verbeux (et utile en debug)
-  // quiet: isCI,
 });
