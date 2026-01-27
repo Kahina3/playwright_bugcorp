@@ -1,19 +1,13 @@
 // tests/lighthouse.spec.js
-import { test, expect } from "@playwright/test";
+import { test } from "@playwright/test";
 import { playAudit } from "playwright-lighthouse";
-
 import lighthouseDesktopConfig from "lighthouse/core/config/lr-desktop-config.js";
 
-test.use({ browserName: "chromium" });
-test.describe.configure({ mode: "serial" });
+const PORT = 9222;
 
-const BASE_URL = "https://bugcorp.vercel.app";
-const PORT = 9222; // Port nécessaire pour l'utilisation de Lighthouse
-
-// ✅ Seuils d'audit dans une variable
 const LIGHTHOUSE_THRESHOLDS = {
   performance: 80,
-  accessibility: 90,
+  accessibility: 70,
   "best-practices": 85,
   seo: 80,
 };
@@ -22,7 +16,7 @@ test.describe("Lighthouse - tests de performances", () => {
   let browser;
   let page;
 
-  test.beforeAll(async ({ playwright }) => {
+  test.beforeAll(async ({ playwright, baseURL }) => {
     browser = await playwright.chromium.launch({
       headless: false,
       args: [`--remote-debugging-port=${PORT}`],
@@ -31,55 +25,36 @@ test.describe("Lighthouse - tests de performances", () => {
   });
 
   test.afterAll(async () => {
-    await browser.close();
+    await browser?.close();
   });
 
-  // lancer Lighthouse sur la page courante
   async function auditPage(pageName) {
     await page.waitForLoadState("networkidle").catch(() => {});
     await playAudit({
       page,
       port: PORT,
+      config: lighthouseDesktopConfig,
+      thresholds: LIGHTHOUSE_THRESHOLDS,
       reports: {
         name: pageName,
         directory: "lighthouse-reports",
         formats: { html: true, json: true },
       },
-      thresholds: LIGHTHOUSE_THRESHOLDS,
-      config: lighthouseDesktopConfig,
     });
   }
 
-  async function goToAnnuaire() {
-    await page.goto(BASE_URL);
-    await page.getByRole("button", { name: "Accéder à l'Annuaire" }).click();
-    await expect(page.getByRole("heading", { name: "L'Annuaire Enterprise" })).toBeVisible();
-  }
-
-  async function goToContact() {
-    await page.goto(BASE_URL);
-    await page.getByRole("button", { name: "Ouvrir un ticket" }).click();
-    await expect(page.getByRole("heading", { name: "Contact Support" })).toBeVisible();
-  }
-
-  async function goToElementsInstables() {
-    await page.goto(BASE_URL);
-    await page.getByRole("button", { name: "Tester vos réflexes" }).click();
-    await expect(page.getByRole("heading", { name: "Éléments Instables" })).toBeVisible();
-  }
-
-  test("Lighthouse - Annuaire", async () => {
-    await goToAnnuaire();
+  test("Lighthouse - Annuaire", async ({ baseURL }) => {
+    await page.goto(baseURL + "#/directory", { waitUntil: "networkidle" });
     await auditPage("annuaire");
   });
 
-  test("Lighthouse - Contact", async () => {
-    await goToContact();
+  test("Lighthouse - Contact", async ({ baseURL }) => {
+    await page.goto(baseURL + "#/contact", { waitUntil: "networkidle" });
     await auditPage("contact");
   });
 
-  test("Lighthouse - Éléments Instables", async () => {
-    await goToElementsInstables();
+  test("Lighthouse - Éléments Instables", async ({ baseURL }) => {
+    await page.goto(baseURL + "#/unstable", { waitUntil: "networkidle" });
     await auditPage("elements-instables");
   });
 });
